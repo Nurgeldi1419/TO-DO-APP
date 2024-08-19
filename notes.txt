@@ -1,0 +1,14 @@
+Header component icinde ayratyn Searchbar() component gerekmi?
+
+
+
+localStorage.setItem("age", "30")
+
+localStorage.setItem("name", "Cruz")
+
+console.log(localStorage.key(1))
+
+console.log(localStorage.getItem("age"))
+
+
+
