@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from "react";
+import { FC, useState, useEffect, useCallback } from "react";
 // import { useRef } from "react";
 
 interface ModalProps {
@@ -17,7 +17,34 @@ const Modal: FC<ModalProps> = ({ closeModal, onConfirm }) => {
   const handleSubmit = () => {
     const newItemId = Date.now().toString(); // Generate a unique ID
     onConfirm(inputText, newItemId);
+    closeModal(false);
   };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    // look for the `Enter`
+    if (event.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
+  const escFunction = useCallback((event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      //Close modal when esc is pressed
+      closeModal(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", escFunction as EventListener, false);
+
+    return () => {
+      document.removeEventListener(
+        "keydown",
+        escFunction as EventListener,
+        false
+      );
+    };
+  }, [escFunction]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center">
@@ -29,6 +56,7 @@ const Modal: FC<ModalProps> = ({ closeModal, onConfirm }) => {
           placeholder="Input your note..."
           value={inputText}
           onChange={handleInputChange}
+          onKeyDown={handleKeyPress}
           className="w-[440px] border outline-none rounded-[5px] bg-transparent py-2 px-4 ring-[#6C63FF] text-[#C3C1E5] text-[16px] font-Inter"
         />
         <div className="flex justify-between mx-auto mt-[105px] self-end">
