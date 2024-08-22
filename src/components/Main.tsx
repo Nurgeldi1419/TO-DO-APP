@@ -1,27 +1,55 @@
-import { useState, FC } from "react";
+import { useState, useEffect, FC } from "react";
 import emptyCheck from "../assets/Detective-check-footprint 1.png";
 import AddButton from "../assets/AddButton.png";
 import Modal from "./Modal";
+import { ListItem } from "../App";
+import DeleteButton from "../assets/trash-svgrepo.png";
 
 interface MainProps {
-  text: string;
-  isChecked: boolean;
+  textList: ListItem[];
+  setTextList: any;
+  searchTerm: string;
+  filter: string;
 }
 
-interface ListItem {
-  text: string;
-  isChecked: boolean;
-}
-
-const Main: FC<MainProps> = () => {
+const Main: FC<MainProps> = ({ textList, setTextList, searchTerm, filter }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  // const [hasContent, setHasContent] = useState(false);
+  useEffect(() => {
+    console.log(`searchTerm value: ${searchTerm}`); // Check for initial value
+  }, [searchTerm]);
 
-  const [textList, setTextList] = useState<ListItem[]>([]);
+  const filteredList = textList.filter((item) => {
+    // item.text.toLowerCase().includes(searchTerm.toString().toLowerCase() || "");
+    if (filter === "all") {
+      return (
+        item.text.toLowerCase().includes(searchTerm.toString().toLowerCase()) ||
+        ""
+      );
+    } else if (filter === "complete") {
+      return (
+        (item.isChecked &&
+          item.text
+            .toLowerCase()
+            .includes(searchTerm.toString().toLowerCase())) ||
+        ""
+      );
+    } else if (filter === "uncomplete") {
+      return (
+        (!item.isChecked &&
+          item.text
+            .toLowerCase()
+            .includes(searchTerm.toString().toLowerCase())) ||
+        ""
+      );
+    }
+    return false; // Default case
+  });
 
-  const handleSubmitText = (text: string) => {
-    setTextList([...textList, { text, isChecked: false }]);
+  console.log(filteredList);
+
+  const handleSubmitText = (text: string, id: string) => {
+    setTextList([...textList, { text, isChecked: false, id }]);
   };
 
   const handleCheckUncheck = (index: number) => {
@@ -30,12 +58,18 @@ const Main: FC<MainProps> = () => {
     setTextList(updatedItems);
   };
 
+  const handleDeleteItem = (index: number) => {
+    const updatedList = [...textList];
+    updatedList.splice(index, 1); // Remove the item at the specified index
+    setTextList(updatedList);
+  };
+
   return (
-    <div className="flex flex-row justify-center w-[750px] relative font-Katin">
+    <div className="flex flex-row justify-center items-center w-[800px] relative font-Katin">
       <div className="w-[520px] text-center h-[545px] ">
         {textList.length > 0 ? (
           <div className="w-full h-full text-xl">
-            {textList.map((item, index) => (
+            {filteredList.map((item, index) => (
               <li
                 key={index}
                 className="text-left py-4 w-full flex gap-2 border-b border-[#6C63FF] cursor-pointer list-none"
@@ -64,13 +98,19 @@ const Main: FC<MainProps> = () => {
                   <span
                     className={
                       item.isChecked
-                        ? "line-through text-[#25252580] font-normal leading-5"
+                        ? "line-through text-[#45454580] font-normal leading-5"
                         : ""
                     }
                   >
                     {item.text}
                   </span>
                 </label>
+                <button
+                  className="bg-white hover:bg-[#e5383b] text-white rounded-full px-2 py-1 ml-auto"
+                  onClick={() => handleDeleteItem(index)}
+                >
+                  <img src={DeleteButton} alt="fff" />
+                </button>
               </li>
             ))}
           </div>

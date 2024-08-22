@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 
 interface ModalProps {
   closeModal: (status: boolean) => void;
-  onConfirm: (text: string) => void;
+  onConfirm: (text: string, id: string) => void;
 }
 
 const Modal: FC<ModalProps> = ({ closeModal, onConfirm }) => {
@@ -15,7 +15,8 @@ const Modal: FC<ModalProps> = ({ closeModal, onConfirm }) => {
   };
 
   const handleSubmit = () => {
-    onConfirm(inputText);
+    const newItemId = Date.now().toString(); // Generate a unique ID
+    onConfirm(inputText, newItemId);
   };
 
   return (

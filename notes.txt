@@ -12,3 +12,9 @@ console.log(localStorage.getItem("age"))
 
 
 
+how to generate random key
+
+make object destruction in texList
+
+
+debounce technique
