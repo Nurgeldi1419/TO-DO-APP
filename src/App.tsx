@@ -1,30 +1,11 @@
-import { useState, useEffect } from "react";
-import "./App.css";
-import Main from "./components/Main";
-import Head from "./components/Head";
-
-export interface ListItem {
-  text: string;
-  isChecked: boolean;
-  id: string;
-}
+import { useState } from 'react';
+import './App.css';
+import Head from './components/Head';
+import Main from './components/Main';
 
 function App() {
-  const [textList, setTextList] = useState<ListItem[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState<string>("all");
-
-  useEffect(() => {
-    const storedData = localStorage.getItem("");
-    if (storedData) {
-      setTextList(JSON.parse(storedData));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("textList", JSON.stringify(textList));
-  }, [textList]);
-
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState<string>('all');
   return (
     <section
       className={`flex justify-center items-center flex-col w-[800px] h-screen `}
@@ -34,12 +15,7 @@ function App() {
         setSearchTerm={setSearchTerm}
         setFilter={setFilter}
       />
-      <Main
-        searchTerm={searchTerm}
-        textList={textList}
-        setTextList={setTextList}
-        filter={filter}
-      />
+      <Main searchTerm={searchTerm} filter={filter} />
     </section>
   );
 }

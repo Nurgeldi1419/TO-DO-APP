@@ -1,75 +1,72 @@
-"use client";
-import { FC, useState, useEffect, useCallback } from "react";
-// import { useRef } from "react";
+import { FC, useState, KeyboardEvent, useEffect } from 'react';
 
 interface ModalProps {
-  closeModal: (status: boolean) => void;
+  setModalOpen: (status: boolean) => void;
   onConfirm: (text: string, id: string) => void;
 }
 
-const Modal: FC<ModalProps> = ({ closeModal, onConfirm }) => {
-  const [inputText, setInputText] = useState("");
+const Modal: FC<ModalProps> = ({ setModalOpen, onConfirm }) => {
+  const [inputText, setInputText] = useState('');
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(event.target.value);
   };
 
   const handleSubmit = () => {
-    const newItemId = Date.now().toString(); // Generate a unique ID
-    onConfirm(inputText, newItemId);
-    closeModal(false);
+    const newItemId = Date.now().toString();
+    if (inputText) {
+      onConfirm(inputText, newItemId);
+      setModalOpen(false);
+    }
   };
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    // look for the `Enter`
-    if (event.key === "Enter") {
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
       handleSubmit();
     }
   };
 
-  const escFunction = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      //Close modal when esc is pressed
-      closeModal(false);
-    }
-  }, []);
-
   useEffect(() => {
-    document.addEventListener("keydown", escFunction as EventListener, false);
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setModalOpen(false);
+      }
+    };
+
+    window.addEventListener(
+      'keydown',
+      handleEscape as unknown as EventListener
+    );
 
     return () => {
-      document.removeEventListener(
-        "keydown",
-        escFunction as EventListener,
-        false
+      window.removeEventListener(
+        'keydown',
+        handleEscape as unknown as EventListener
       );
     };
-  }, [escFunction]);
+  }, [setModalOpen]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center">
-      <div className=" w-[500px] border h-[289px] bg-white  rounded-2xl font-Katin flex-row p-5">
-        <h1 className="text-[#252525] font-medium text-2xl mb-5">New Note</h1>
+    <div className='fixed inset-0 bg-black bg-opacity-25 flex justify-center items-center'>
+      <div className='w-[500px] border h-[289px] bg-white rounded-2xl p-5'>
+        <h1 className='text-[#252525] font-medium text-2xl mb-5'>New Note</h1>
         <input
-          type="text"
-          name=""
-          placeholder="Input your note..."
+          type='text'
+          placeholder='Input your note...'
           value={inputText}
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
-          className="w-[440px] border outline-none rounded-[5px] bg-transparent py-2 px-4 ring-[#6C63FF] text-[#C3C1E5] text-[16px] font-Inter"
+          className='w-[440px] border outline-none rounded-[5px] bg-transparent py-2 px-4 ring-[#6C63FF] text-[#252525] text-[16px]'
         />
-        <div className="flex justify-between mx-auto mt-[105px] self-end">
+        <div className='flex justify-between mt-[105px]'>
           <button
-            className="bg-white rounded text-[#6C63FF] border border-[#6C63FF] py-[10px] px-[22px]"
-            onClick={() => {
-              closeModal(false);
-            }}
+            className='bg-white rounded text-[#6C63FF] border border-[#6C63FF] py-[10px] px-[22px]'
+            onClick={() => setModalOpen(false)}
           >
             Cancel
           </button>
           <button
-            className="bg-[#6C63FF] rounded text-white py-[10px] px-[22px]"
+            className='bg-[#6C63FF] rounded text-white py-[10px] px-[22px]'
             onClick={handleSubmit}
           >
             Apply
